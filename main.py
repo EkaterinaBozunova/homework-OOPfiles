@@ -39,75 +39,30 @@ def get_shop_list_by_dishes(dishes, person_count):
             print(f'\n"Такого блюда нет в списке!"\n')
     return ingr_list
 
-def rewrite_file(path1=None, path2=None, path3=None):
-    if path1 or path2 or path3 is None:
-        path1 = '1.txt'
-        path2 = '2.txt'
-        path3 = '3.txt'
-        outout_file = "rewrite_file.txt"
-        file1_path = os.path.join(os.getcwd(), path1)
-        file2_path = os.path.join(os.getcwd(), path2)
-        file3_path = os.path.join(os.getcwd(), path3)
-        with open(file1_path, 'r', encoding='utf-8') as f1:
-            file1 = f1.readlines()
-        with open(file2_path, 'r', encoding='utf-8') as f2:
-            file2 = f2.readlines()
-        with open(file3_path, 'r', encoding='utf-8') as f3:
-            file3 = f3.readlines()
-        with open(outout_file, 'w', encoding='utf-8') as f_total:
+def acounting(file:str) -> int:
+    return sum(1 for _ in open(file, 'rt', encoding='utf-8'))
 
-            if len(file1) < len(file2) and len(file1) < len(file3):
-                f_total.write(path1 + '\n')
-                f_total.write(str(len(file1)) + '\n')
-                f_total.writelines(file1)
-                f_total.write('\n')
-            elif len(file2) < len(file1) and len(file2) < len(file3):
-                f_total.write(path2 + '\n')
-                f_total.write(str(len(file2)) + '\n')
-                f_total.writelines(file2)
-                f_total.write('\n')
-            elif len(file3) < len(file1) and len(file3) < len(file2):
-                f_total.write(path3 + '\n')
-                f_total.write(str(len(file3)) + '\n')
-                f_total.writelines(file3)
-                f_total.write('\n')
-            if len(file2) > len(file1) > len(file3) or len(file2) < len(file1) < len(
-                    file3):
-                f_total.write(path1 + '\n')
-                f_total.write(str(len(file1)) + '\n')
-                f_total.writelines(file1)
-                f_total.write('\n')
-            elif len(file1) > len(file2) > len(file3) or len(file2) > len(file1) and len(file2) < len(
-                    file3):
-                f_total.write(path2 + '\n')
-                f_total.write(str(len(file2)) + '\n')
-                f_total.writelines(file2)
-                f_total.write('\n')
-            elif len(file1) > len(file3) > len(file2) or len(file3) > len(file1) and len(file3) < len(
-                    file2):
-                f_total.write(path3 + '\n')
-                f_total.write(str(len(file3)) + '\n')
-                f_total.writelines(file3)
-                f_total.write('\n')
-            if len(file1) > len(file2) and len(file1) > len(file3):
-                f_total.write(path1 + '\n')
-                f_total.write(str(len(file1)) + '\n')
-                f_total.writelines(file1)
-            elif len(file2) > len(file1) and len(file2) > len(file3):
-                f_total.write(path2 + '\n')
-                f_total.write(str(len(file2)) + '\n')
-                f_total.writelines(file2)
-            elif len(file3) > len(file1) and len(file3) > len(file2):
-                f_total.write(path3 + '\n')
-                f_total.write(str(len(file3)) + '\n')
-                f_total.writelines(file3)
-    else:
-        print('Давай лучше без параметров')
-    return
+def rewrite_file(file_for_writing: str, base_path, location):
+    files = []
+    for i in list(os.listdir(os.path.join(base_path, location))):
+        files.append([acounting(os.path.join(base_path, location, i)), os.path.join(base_path, location, i), i])
+    for file_from_list in sorted(files):
+        opening_files = open(file_for_writing, 'a', encoding='utf-8')
+        opening_files.write(f'{file_from_list[2]}\n')
+        opening_files.write(f"{file_from_list[0]}\n")
+        with open(file_from_list[1], 'r', encoding='utf-8') as file:
+            counting = 1
+            for line in file:
+                opening_files.write(f'строка № {counting} в файле {file_from_list[2]} : {line}')
+                counting += 1
+        opening_files.write(f'\n')
+        opening_files.close()
 
 
 if __name__ == '__main__':
-    filename = "recipes.txt"
+    file_for_writing = os.path.abspath('\\Users\\katri\\Desktop\\homework-OOPfiles\\rewrite_file.txt')
+    base_path = os.getcwd()
+    location = os.path.abspath('\\Users\\katri\\Desktop\\homework-OOPfiles\\files')
     cook_book = read_cookbook()
     print('Задание 1:')
     time.sleep(1)
@@ -117,4 +72,5 @@ if __name__ == '__main__':
 
     time.sleep(2)
     print('Задание 3:')
-    rewrite_file()
+    
+    rewrite_file(file_for_writing, base_path, location)
